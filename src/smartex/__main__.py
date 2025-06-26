@@ -1,15 +1,26 @@
+import argparse
 from . import smart_latex_to_png
 
 def main():
-    latex = input("📥 Enter LaTeX expression: ").strip()
-    name = input("💾 Output filename (without .png): ").strip() or "output"
-    size = input("🔠 Font size (tiny/small/normalsize/large/huge/Huge) [default=huge]: ").strip() or "huge"
+    parser = argparse.ArgumentParser(
+        description="Render LaTeX math to high-quality PNG using Codecogs."
+    )
+    parser.add_argument("expression", help="LaTeX expression to render")
+    parser.add_argument(
+        "-o", "--output", default="output", help="Output filename (without .png)"
+    )
+    parser.add_argument(
+        "-s",
+        "--size",
+        default="huge",
+        choices=["tiny", "small", "normalsize", "large", "huge", "Huge"],
+        help="LaTeX font size",
+    )
+
+    args = parser.parse_args()
 
     try:
-        file_path = smart_latex_to_png(latex, name, size)
-        print(f"✅ Saved: {file_path}")
+        path = smart_latex_to_png(args.expression, args.output, args.size)
+        print(f"✅ Saved image to: {path}")
     except Exception as e:
-        print(e)
-
-if __name__ == "__main__":
-    main()
+        print(f"❌ Error: {e}")
